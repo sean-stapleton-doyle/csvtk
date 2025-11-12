@@ -1,6 +1,6 @@
 # csvtk
 
-A powerful command-line tool for working with CSV files, built with Go and Cobra.
+A cli toolkit for working with CSV files.
 
 ## Features
 
@@ -11,7 +11,7 @@ A powerful command-line tool for working with CSV files, built with Go and Cobra
 - **Rename** - Rename column headers
 - **Convert** - Convert between CSV and TSV formats
 - **Lint** - Validate CSV files according to RFC 4180
-- **Filter** - Advanced filtering with regex and numeric comparisons (strategy pattern)
+- **Filter** - Filtering with regex and numeric comparisons
 - **Select** - Extract specific columns
 - **Sort** - Sort data by column values
 - **Transform** - Transform data (uppercase, lowercase, replace, trim)
@@ -25,11 +25,11 @@ go build -o csvtk
 
 ## Usage
 
-All commands support reading from stdin using `-` or by omitting the filename, enabling powerful command chaining.
+All commands support reading from stdin using `-` or by omitting the filename.
 
 ### View CSV Files
 
-Open an interactive viewer with keyboard navigation, horizontal scrolling, and filtering:
+Open a basic viewer:
 
 ```bash
 csvtk view myfile.csv
@@ -69,7 +69,7 @@ csvtk count columns myfile.csv
 
 ### Move Operations
 
-Move a column to a different position:
+Move a column to a different position (uses an index to specify the new location):
 ```bash
 csvtk move column Email 0 myfile.csv
 ```
@@ -96,8 +96,6 @@ csvtk header -n myfile.csv
 Rename a header:
 ```bash
 csvtk rename Email EmailAddress myfile.csv -o updated.csv
-# Or use stdin/stdout:
-cat myfile.csv | csvtk rename City Location - > updated.csv
 ```
 
 ### Convert Formats
@@ -318,81 +316,6 @@ The filter command supports the following operators via the `--operator` flag:
 - `<=` or `lte` - Less than or equal
 - `==` - Numeric equality
 - `!=` - Numeric inequality
-
-## Architecture
-
-The project follows clean design principles with clear separation of concerns:
-
-```
-csvtk/
-├── cmd/              # Cobra CLI commands
-│   ├── root.go       # Root command
-│   ├── count.go      # Count operations
-│   ├── move.go       # Move operations
-│   ├── header.go     # Header operations
-│   ├── rename.go     # Rename headers
-│   ├── convert.go    # Format conversion
-│   ├── lint.go       # Validation
-│   ├── filter.go     # Filtering with strategy pattern
-│   ├── select.go     # Column selection
-│   ├── sort.go       # Sorting
-│   ├── transform.go  # Data transformation
-│   ├── view.go       # Interactive viewer
-│   └── utils.go      # Helper functions
-├── pkg/
-│   ├── csvparser/    # CSV parsing and I/O
-│   │   ├── parser.go
-│   │   ├── io.go     # Stdin/file reading utilities
-│   │   └── parser_test.go
-│   ├── csvlint/      # CSV validation
-│   │   ├── lint.go
-│   │   └── lint_test.go
-│   ├── csveditor/    # CSV manipulation
-│   │   ├── editor.go
-│   │   ├── strategies.go    # Filter strategy pattern
-│   │   ├── transform.go     # Transform functions
-│   │   ├── editor_test.go
-│   │   ├── strategies_test.go
-│   │   └── transform_test.go
-│   └── csvviewer/    # Interactive TUI viewer
-│       └── viewer.go
-└── main.go
-```
-
-### Design Principles
-
-- **Separation of Concerns**: CLI logic is separated from business logic
-- **Strategy Pattern**: Filter operations use the strategy pattern for extensibility
-- **Parser Package**: Handles all CSV reading and writing operations
-- **Editor Package**: Provides data manipulation capabilities
-- **Transform Package**: Implements various data transformation functions
-- **Lint Package**: Validates CSV structure and format
-- **Viewer Package**: Provides interactive terminal UI with advanced features
-- **Stdin Support**: All commands support stdin for Unix-style piping
-- **Testability**: Each package has comprehensive unit tests
-
-## Testing
-
-Run all tests:
-
-```bash
-go test ./pkg/... -v
-```
-
-Run tests for a specific package:
-
-```bash
-go test ./pkg/csvparser -v
-go test ./pkg/csveditor -v
-go test ./pkg/csvlint -v
-```
-
-## Dependencies
-
-- [Cobra](https://github.com/spf13/cobra) - CLI framework
-- [Bubbletea](https://github.com/charmbracelet/bubbletea) - Terminal UI framework
-- [Lipgloss](https://github.com/charmbracelet/lipgloss) - Style definitions for terminal output
-- [Clipboard](https://github.com/atotto/clipboard) - Cross-platform clipboard access
 
 ## License
 
